@@ -1,0 +1,31 @@
+import pandas as pd
+import xml.etree.ElementTree as ET
+import time
+
+# Read the Excel file
+excel_data = pd.read_excel('/Users/thomasgavaghan/Downloads/Menu Map Translation.xlsx')
+
+# Read the XML file
+tree = ET.parse('/Users/thomasgavaghan/Downloads/CM English.txt')
+root = tree.getroot()
+
+# Get the current timestamp
+timestamp = time.strftime("%Y%m%d_%H%M%S")
+
+# Iterate through each row of the Excel file
+for row in excel_data.itertuples():
+    # Get the search term and replacement text from the Excel file
+    search_term = row[2]
+    replacement_text = row[3]
+
+    # Find all occurrences of the search term in the XML file
+    for element in root.iter():
+        if element.text.lower() == search_term:
+            # Replace the search term with the replacement text
+            element.text = replacement_text
+
+# Generate the updated filename with the timestamp
+updated_filename = f"CM_English_updated_{timestamp}.txt"
+
+# Write the updated XML file to the new filename
+tree.write(updated_filename, encoding='utf-8')
